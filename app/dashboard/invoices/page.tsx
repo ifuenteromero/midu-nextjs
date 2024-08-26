@@ -1,5 +1,7 @@
+import { fetchInvoicesPages } from '@/app/lib/data';
 import { lusitana } from '@/app/ui/fonts';
 import { CreateInvoice } from '@/app/ui/invoices/buttons';
+import Pagination from '@/app/ui/invoices/pagination';
 import Table from '@/app/ui/invoices/table';
 import Search from '@/app/ui/search';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
@@ -15,6 +17,7 @@ export default async function Page({
 }) {
 	const query = searchParams?.query || '';
 	const currentPage = parseInt(searchParams?.page || '1');
+	const totalPages = await fetchInvoicesPages(query);
 	return (
 		<div className='w-full'>
 			<div className='flex w-full items-center justify-between'>
@@ -25,13 +28,13 @@ export default async function Page({
 				<CreateInvoice />
 			</div>
 			<Suspense
-				key={query + currentPage}
+				key={query + currentPage} // si no, no sale el skeleton
 				fallback={<InvoicesTableSkeleton />}
 			>
 				<Table query={query} currentPage={currentPage} />
 			</Suspense>
 			<div className='mt-5 flex w-full justify-center'>
-				{/* <Pagination totalPages={totalPages} /> */}
+				<Pagination totalPages={totalPages} />
 			</div>
 		</div>
 	);
